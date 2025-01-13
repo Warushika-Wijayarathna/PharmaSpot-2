@@ -392,10 +392,12 @@ if (auth == undefined) {
         });
       });
     }
+
     // Filter products by supplier
     function filterProductsBySupplier(supplier) {
       let rows = $("#productList tbody tr");
       rows.hide().filter(function () {
+        console.log("Supplier filter: ", $(this).find("td:eq(3)").text());
         return $(this).find("td:eq(3)").text() === supplier;
       }).show();
 
@@ -407,8 +409,12 @@ if (auth == undefined) {
     }
 
     // Event listener for supplier dropdown change
-    $("#supplier-select").on("change", function () {
-      let selectedSupplier = $(this).val();
+    $("#suppliers-select").on("change", function () {
+      let selectedSupplier = $(this).val().trim();
+
+      // split the value by "-" and get the 2nd element which is the supplier name
+        selectedSupplier = selectedSupplier.split("-")[1];
+      console.log("Selected Supplier: ", selectedSupplier);
       if (selectedSupplier === "0") {
         $("#productList tbody tr").show();
         $("#no-products-message").hide();
@@ -416,7 +422,7 @@ if (auth == undefined) {
         filterProductsBySupplier(selectedSupplier);
       }
     });
-    // if the selected supplier is found on the table rows sort them hrough and leave them
+
 
     function loadCustomers() {
       $.get(api + "customers/all", function (customers) {
@@ -2676,11 +2682,10 @@ function loadSupplierList() {
   }
 }
 
+
+// Add "No products found" message
 $(document).ready(function () {
   $("#productList").after('<div id="no-products-message" style="display:none;">No products found for the selected supplier.</div>');
 });
-
-
-
 
 
