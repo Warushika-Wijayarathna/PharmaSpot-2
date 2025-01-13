@@ -2552,12 +2552,14 @@ $("#upSubmitSupplier").on("click", function (e) {
 
   $.ajax({
     url: api + "suppliers/suppliers",
-    type: "PUT",
+    type: "POST",
     data: JSON.stringify(upSupplierData),
     contentType: "application/json; charset=utf-8",
     success: function (data) {
       notiflix.Notify.success("Supplier updated successfully!");
-      $("#updateSupplier").modal('hide');
+      // Additional logic to update the UI or state
+      $("#newSupplier").modal('hide');
+
     },
     error: function (error) {
       notiflix.Notify.failure("Failed to update supplier.");
