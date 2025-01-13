@@ -157,8 +157,8 @@ $(function () {
 $.fn.allowOnlyNumbers = function() {
   return this.on('keydown', function(e) {
   // Allow: backspace, delete, tab, escape, enter, ., ctrl/cmd+A, ctrl/cmd+C, ctrl/cmd+X, ctrl/cmd+V, end, home, left, right, down, up
-    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 || 
-      (e.keyCode >= 35 && e.keyCode <= 40) || 
+    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+      (e.keyCode >= 35 && e.keyCode <= 40) ||
       ((e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 88) && (e.ctrlKey === true || e.metaKey === true))) {
       return;
   }
@@ -218,7 +218,7 @@ if (auth == undefined) {
 
   $.get(api + "suppliers/suppliers", function (data) {
     allSuppliers = data;
-    
+
   });
 
   $.get(api + "users/all", function (users) {
@@ -273,7 +273,7 @@ if (auth == undefined) {
     if (0 == user.perm_settings) {
       $(".p_five").hide();
     }
-    
+
 
     function loadProducts() {
       $.get(api + "inventory/products", function (data) {
@@ -315,7 +315,7 @@ if (auth == undefined) {
         );
         }
 
-       
+
         $("#parent").text("");
 
         data.forEach((item) => {
@@ -333,7 +333,7 @@ if (auth == undefined) {
             item_img = path.join(img_path, item.img);
             item_img = checkFileExists(item_img) ? item_img : default_item_img;
           }
-          
+
 
           let item_info = `<div class="col-lg-2 box ${item.category}"
                                 onclick="$(this).addToCart(${item._id}, ${
@@ -377,7 +377,7 @@ if (auth == undefined) {
       });
     }
 
-    
+
 
     function loadCustomers() {
       $.get(api + "customers/all", function (customers) {
@@ -1385,7 +1385,7 @@ if (auth == undefined) {
       $("#fullname").val(allUsers[index].fullname);
       $("#username").val(validator.unescape(allUsers[index].username));
       $("#password").attr("placeholder", "New Password");
-    
+
 
       for (perm of permissions) {
         var el = "#" + perm;
@@ -1417,7 +1417,7 @@ if (auth == undefined) {
       console.log("Updatesup contact >>"+ supplier.contact)
 
       $("#Suppliers").modal("hide");
-      
+
       $('#upSupplierName').val(supplier.name);
       $('#upSupplierNumber').val(supplier.contact);
       // Show the edit modal
@@ -1546,7 +1546,7 @@ if (auth == undefined) {
       loadSupplierList();
     });
 
-    
+
     function loadUserList() {
       let counter = 0;
       let user_list = "";
@@ -1670,7 +1670,7 @@ if (auth == undefined) {
           ? product_img
           : default_item_img;
         }
-        
+
         //render product list
         product_list +=
           `<tr>
@@ -1727,7 +1727,7 @@ if (auth == undefined) {
 
       $.get(api + "suppliers/suppliers", function (data) {
         allSuppliers = data;
-        
+
       });
 
       console.log("load Supplier table")
@@ -1736,10 +1736,10 @@ if (auth == undefined) {
       let counter = 0;
       $("#supplier_list").empty();
       $("#supplierList").DataTable().destroy();
-    
+
       allSuppliers.forEach((supplier, index) => {
         counter++;
-    
+
         supplier_list += `
                   <tr>
                       <td>${supplier.name}</td>
@@ -1752,7 +1752,7 @@ if (auth == undefined) {
                   </tr>
               `;
       });
-    
+
       if (counter == allSuppliers.length) {
         $("#supplier_list").html(supplier_list);
         $("#supplierList").DataTable({
@@ -1827,7 +1827,7 @@ if (auth == undefined) {
         mac_address = mac;
       });
       const appChoice = $("#app").find("option:selected").text();
-    
+
       formData["app"] = appChoice;
       formData["mac"] = mac_address;
       formData["till"] = 1;
@@ -1839,8 +1839,8 @@ if (auth == undefined) {
         name: 'app',
         value: formData.app
     });
-        $appField.length 
-            ? $appField.val(formData.app) 
+        $appField.length
+            ? $appField.val(formData.app)
             : $("#settings_form").append(`<input type="hidden" name="app" value="${$hiddenAppField}" />`);
 
 
@@ -2295,7 +2295,7 @@ $.fn.viewTransaction = function (index) {
   });
 
   paymentMethod = allTransactions[index].payment_type;
- 
+
 
   if (allTransactions[index].paid != "") {
     payment = `<tr>
@@ -2330,7 +2330,7 @@ $.fn.viewTransaction = function (index) {
   }
 
     logo = path.join(img_path, validator.unescape(settings.img));
-      
+
       receipt = `<div style="font-size: 10px">                            
         <p style="text-align: center;">
         ${
@@ -2525,20 +2525,20 @@ function addSupplier(supplierData) {
       notiflix.Notify.success("Supplier added successfully!");
       // Additional logic to update the UI or state
       $("#newSupplier").modal('hide');
-      
+
     },
     error: function (error) {
       notiflix.Notify.failure("Failed to add supplier.");
       console.error(error);
     },
   });
-  
+
 }
 
 
 $("#upSubmitSupplier").on("click", function (e) {
   e.preventDefault();
-  
+
   const upSupplierData = {
     id: allSuppliers[supplier_index].id,
     name: $("#upSupplierName").val(),
@@ -2551,7 +2551,7 @@ $("#upSubmitSupplier").on("click", function (e) {
   }
 
   $.ajax({
-    url: api + "suppliers/suppliers/" + upSupplierData.id,
+    url: api + "suppliers/suppliers",
     type: "PUT",
     data: JSON.stringify(upSupplierData),
     contentType: "application/json; charset=utf-8",
@@ -2572,7 +2572,7 @@ $("#upSubmitSupplier").on("click", function (e) {
 $("#submitSupplier").on("click", function (e) {
   e.preventDefault();
 
-  
+
 
 
   console.log("Adding supplier...");
@@ -2603,4 +2603,4 @@ ipcRenderer.on("click-element", (event, elementId) => {
 
 
 
-    
+

@@ -43,6 +43,7 @@ express.use("/api/categories", require("./api/categories"));
 express.use("/api/settings", require("./api/settings"));
 express.use("/api/users", require("./api/users"));
 express.use("/api", require("./api/transactions"));
+express.use("/api/suppliers", require("./api/suppliers"));
 
 server.listen(PORT, () => {
     process.env.PORT = server.address().port;

@@ -35,6 +35,8 @@ suppliersDB.ensureIndex({ fieldName: "_id", unique: true });
  */
 app.get("/suppliers", (req, res) => {
     suppliersDB.find({}, (err, docs) => {
+        // show the databse file path
+        console.log("DBPath   :",dbPath);
         if (err) {
             res.status(500).json({
                 error: "Internal Server Error",
