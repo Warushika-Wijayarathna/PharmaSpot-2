@@ -1,6 +1,7 @@
 let app = require("express")();
 let server = require("http").Server(app);
 let bodyParser = require("body-parser");
+const nodemailer = require("nodemailer");
 let Datastore = require("@seald-io/nedb");
 let Inventory = require("./inventory");
 const path = require("path");
@@ -24,6 +25,38 @@ let transactionsDB = new Datastore({
 });
 
 transactionsDB.ensureIndex({ fieldName: "_id", unique: true });
+
+
+// Create a Nodemailer transporter for Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "pharmacysystem.mp@gmail.com",  // Replace with your Gmail email
+    pass: "aduf zuuh imsp aqda",      // Replace with your Gmail app password
+  },
+});
+
+/**
+ * Function to send the order details via email
+ * @param {Object} orderDetails - The order details to send via email
+ */
+function sendEmail(orderDetails) {
+  const mailOptions = {
+    from: "pharmacysystem.mp@gmail.com",  // Replace with your Gmail email
+    to: "gayashan9090@gmail.com", // Replace with recipient's email
+    subject: "New Order Received",  // Email subject
+    text: `A new order has been placed.\n\nOrder Details:\n\n${JSON.stringify(orderDetails, null, 2)}`,  // Email body content (order details)
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions, function (err, info) {
+    if (err) {
+      console.error("Error sending email: ", err);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+}
 
 /**
  * GET endpoint: Get the welcome message for the Transactions API.
@@ -153,6 +186,8 @@ app.get("/by-date", function (req, res) {
   }
 });
 
+// aduf zuuh imsp aqda
+
 /**
  * POST endpoint: Create a new transaction.
  *
@@ -163,6 +198,8 @@ app.get("/by-date", function (req, res) {
 app.post("/new", function (req, res) {
   let newTransaction = req.body;
 
+  console.log(" new >>"+newTransaction);
+
   transactionsDB.insert(newTransaction, function (err, transaction) {
     if (err) {
       console.error(err);
@@ -171,6 +208,10 @@ app.post("/new", function (req, res) {
         message: "An unexpected error occurred.",
       });
     } else {
+
+      // Send order details via email
+      sendEmail(newTransaction);
+
       res.sendStatus(200);
 
       if (newTransaction.paid >= newTransaction.total) {
@@ -178,6 +219,12 @@ app.post("/new", function (req, res) {
       }
     }
   });
+});
+
+
+// Start the server
+server.listen(3000, function () {
+  console.log("Server is running on port 3000");
 });
 
 /**

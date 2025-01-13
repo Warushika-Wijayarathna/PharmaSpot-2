@@ -14,6 +14,8 @@ const dbPath = path.join(
     "categories.db",
 );
 
+// console.log("dbPath >>", dbPath);
+
 app.use(bodyParser.json());
 
 module.exports = app;

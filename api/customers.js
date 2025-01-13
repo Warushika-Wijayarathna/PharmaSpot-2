@@ -102,6 +102,9 @@ app.post("/customer", function (req, res) {
  * @returns {void}
  */
 app.delete("/customer/:customerId", function (req, res) {
+
+    console.log("req.params.customerId >>", req.params.customerId);
+
     customerDB.remove(
         {
             _id: req.params.customerId,

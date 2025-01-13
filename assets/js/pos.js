@@ -22,6 +22,7 @@ let allUsers = [];
 let allProducts = [];
 let allCategories = [];
 let allTransactions = [];
+let allSuppliers = [];
 let sold = [];
 let state = [];
 let sold_items = [];
@@ -40,6 +41,7 @@ let order_index = 0;
 let user_index = 0;
 let product_index = 0;
 let transaction_index;
+let supplier_index = 0;
 const appName = process.env.APPNAME;
 const appData = process.env.APPDATA;
 let host = "localhost";
@@ -52,6 +54,7 @@ let holdOrderList = [];
 let customerOrderList = [];
 let ownUserEdit = null;
 let totalPrice = 0;
+let supIndex = 0;
 let orderTotal = 0;
 let auth_error = "Incorrect username or password";
 let auth_empty = "Please enter a username and password";
@@ -75,6 +78,7 @@ const permissions = [
   "perm_transactions",
   "perm_users",
   "perm_settings",
+  "perm_suppliers",
 ];
 notiflix.Notify.init({
   position: "right-top",
@@ -95,6 +99,7 @@ const {
 
 //set the content security policy of the app
 setContentSecurityPolicy();
+
 
 $(function () {
   function cb(start, end) {
@@ -211,6 +216,11 @@ if (auth == undefined) {
     settings = data.settings;
   });
 
+  $.get(api + "suppliers/suppliers", function (data) {
+    allSuppliers = data;
+    
+  });
+
   $.get(api + "users/all", function (users) {
     allUsers = [...users];
   });
@@ -225,6 +235,7 @@ if (auth == undefined) {
     loadCategories();
     loadProducts();
     loadCustomers();
+    loadSupplierList();
 
     if (settings && validator.unescape(settings.symbol)) {
       $("#price_curr, #payment_curr, #change_curr").text(validator.unescape(settings.symbol));
@@ -262,6 +273,7 @@ if (auth == undefined) {
     if (0 == user.perm_settings) {
       $(".p_five").hide();
     }
+    
 
     function loadProducts() {
       $.get(api + "inventory/products", function (data) {
@@ -364,6 +376,8 @@ if (auth == undefined) {
         });
       });
     }
+
+    
 
     function loadCustomers() {
       $.get(api + "customers/all", function (customers) {
@@ -1392,6 +1406,24 @@ if (auth == undefined) {
       $("#newCategory").modal("show");
     };
 
+    $.fn.editSupplier = function (index) {
+
+      supplier_index = index;
+
+      const supplier = allSuppliers[index];
+
+      console.log("Updatesup id >>"+ supplier.id)
+      console.log("Updatesup name >>"+ supplier.name)
+      console.log("Updatesup contact >>"+ supplier.contact)
+
+      $("#Suppliers").modal("hide");
+      
+      $('#upSupplierName').val(supplier.name);
+      $('#upSupplierNumber').val(supplier.contact);
+      // Show the edit modal
+      $('#updateSupplier').modal('show');
+    };
+
     $.fn.deleteProduct = function (id) {
       diagOptions = {
         title: "Are you sure?",
@@ -1469,6 +1501,35 @@ if (auth == undefined) {
       );
     };
 
+    $.fn.deleteSupplier = function (index) {
+
+      const id = allSuppliers[index].id;
+
+      diagOptions = {
+        title: "Are you sure?",
+        text: "You are about to delete this supplier.",
+        okButtonText: "Yes, delete it!",
+      };
+
+      notiflix.Confirm.show(
+        diagOptions.title,
+        diagOptions.text,
+        diagOptions.okButtonText,
+        diagOptions.cancelButtonText,
+        () => {
+          $.ajax({
+            url: api + "suppliers/suppliers/" + id,
+            type: "DELETE",
+            success: function (result) {
+              loadSupplierList();
+              notiflix.Report.success("Done!", "Suppier deleted", "Ok");
+            },
+          });
+        },
+      );
+    };
+
+
     $("#productModal").on("click", function () {
       loadProductList();
     });
@@ -1481,6 +1542,11 @@ if (auth == undefined) {
       loadCategoryList();
     });
 
+    $("#supplierModal").on("click", function () {
+      loadSupplierList();
+    });
+
+    
     function loadUserList() {
       let counter = 0;
       let user_list = "";
@@ -1655,6 +1721,48 @@ if (auth == undefined) {
           },
         ],
       });
+    }
+
+    function loadSupplierList() {
+
+      $.get(api + "suppliers/suppliers", function (data) {
+        allSuppliers = data;
+        
+      });
+
+      console.log("load Supplier table")
+
+      let supplier_list = "";
+      let counter = 0;
+      $("#supplier_list").empty();
+      $("#supplierList").DataTable().destroy();
+    
+      allSuppliers.forEach((supplier, index) => {
+        counter++;
+    
+        supplier_list += `
+                  <tr>
+                      <td>${supplier.name}</td>
+                      <td>${supplier.contact}</td>
+                      <td>
+                          <button class="btn btn-primary"  onClick="$(this).editSupplier(${index})">Edit</button>
+                          <button class="btn btn-danger" onClick="$(this).deleteSupplier(${index})">Delete</button>
+                          
+                      </td>
+                  </tr>
+              `;
+      });
+    
+      if (counter == allSuppliers.length) {
+        $("#supplier_list").html(supplier_list);
+        $("#supplierList").DataTable({
+          autoWidth: false,
+          info: true,
+          JQueryUI: true,
+          ordering: true,
+          paging: false,
+        });
+      }
     }
 
     function loadCategoryList() {
@@ -2403,3 +2511,96 @@ $("#quit").on("click", function () {
 ipcRenderer.on("click-element", (event, elementId) => {
   document.getElementById(elementId).click();
 });
+
+
+// Function to add a supplier
+function addSupplier(supplierData) {
+
+  $.ajax({
+    url: api + "suppliers/suppliers",
+    type: "POST",
+    data: JSON.stringify(supplierData),
+    contentType: "application/json; charset=utf-8",
+    success: function (data) {
+      notiflix.Notify.success("Supplier added successfully!");
+      // Additional logic to update the UI or state
+      $("#newSupplier").modal('hide');
+      
+    },
+    error: function (error) {
+      notiflix.Notify.failure("Failed to add supplier.");
+      console.error(error);
+    },
+  });
+  
+}
+
+
+$("#upSubmitSupplier").on("click", function (e) {
+  e.preventDefault();
+  
+  const upSupplierData = {
+    id: allSuppliers[supplier_index].id,
+    name: $("#upSupplierName").val(),
+    contact: $("#upSupplierNumber").val(),
+  }
+
+  if (validator.isEmpty(upSupplierData.name) || validator.isEmpty(upSupplierData.contact)) {
+    notiflix.Notify.failure("Please fill in all required fields.");
+    return;
+  }
+
+  $.ajax({
+    url: api + "suppliers/suppliers/" + upSupplierData.id,
+    type: "PUT",
+    data: JSON.stringify(upSupplierData),
+    contentType: "application/json; charset=utf-8",
+    success: function (data) {
+      notiflix.Notify.success("Supplier updated successfully!");
+      $("#updateSupplier").modal('hide');
+    },
+    error: function (error) {
+      notiflix.Notify.failure("Failed to update supplier.");
+      console.error(error);
+    },
+  });
+
+});
+
+
+// Event listener for adding a supplier
+$("#submitSupplier").on("click", function (e) {
+  e.preventDefault();
+
+  
+
+
+  console.log("Adding supplier...");
+  const supplierData = {
+    id: Math.floor(Date.now() / 1000),
+    name: $("#supplierName").val(),
+    contact: $("#supplierNumber").val(),
+  };
+
+  console.log(" new supplier >> "+supplierData);
+
+  if (validator.isEmpty(supplierData.name) || validator.isEmpty(supplierData.contact)) {
+    notiflix.Notify.failure("Please fill in all required fields.");
+    return;
+  }
+      addSupplier(supplierData);
+});
+
+// Existing code...
+ipcRenderer.on("click-element", (event, elementId) => {
+  document.getElementById(elementId).click();
+});
+
+
+
+
+
+
+
+
+    
