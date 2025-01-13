@@ -383,10 +383,10 @@ if (auth == undefined) {
       $.get(api + "suppliers/suppliers", function (data) {
         allSuppliers= data;
         loadSupplierList();
-        $("#supplier-select").html(`<option value="0">Select</option>`);
+        $("#supplier-select,#suppliers-select").html(`<option value="0">Select</option>`);
         allSuppliers.forEach((supplier) => {
           console.log("Supplier: ", supplier);
-          $("#supplier-select").append(
+          $("#supplier-select,#suppliers-select").append(
             `<option value="${supplier._id+"-"+supplier.name}">${supplier.name}</option>`,
           );
         });
