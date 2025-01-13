@@ -71,6 +71,44 @@ app.post("/suppliers", (req, res) => {
 });
 
 /**
+ * POST endpoint: Create a new supplier.
+ *
+ * @param {Object} req request object with supplier data in the body.
+ * @param {Object} res response object.
+ * @returns {void}
+ */
+app.post("/delete", (req, res) => {
+    console.log(req.body);
+    const supplier = req.body;
+    suppliersDB.insert(supplier, (err, newDoc) => {
+        if (err) {
+            res.status(500).json({
+                error: "Internal Server Error",
+                message: "An unexpected error occurred while adding the supplier.",
+            });
+        } else {
+            res.status(201).json(newDoc);
+        }
+    });
+});
+
+
+/**
+ * POST endpoint: Create a new supplier.
+ *
+ * @param {Object} req request object with supplier data in the body.
+ * @param {Object} res response object.
+ * @returns {void}
+ */
+app.post("/update", (req, res) => {
+    console.log(req.body);
+    const supplier = req.body;
+    // compare the contact and if it is the same, update the supplier
+
+});
+
+
+/**
  * PUT endpoint: Update a supplier by ID.
  *
  * @param {Object} req request object with supplier data in the body.

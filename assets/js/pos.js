@@ -1504,6 +1504,14 @@ if (auth == undefined) {
     $.fn.deleteSupplier = function (index) {
 
       const id = allSuppliers[index].id;
+      const name = allSuppliers[index].name;
+      const contact = allSuppliers[index].contact;
+
+      const del = {
+        id: id,
+        name: name,
+        contact: contact,
+      }
 
       diagOptions = {
         title: "Are you sure?",
@@ -1518,11 +1526,19 @@ if (auth == undefined) {
         diagOptions.cancelButtonText,
         () => {
           $.ajax({
-            url: api + "suppliers/suppliers/" + id,
-            type: "DELETE",
-            success: function (result) {
-              loadSupplierList();
-              notiflix.Report.success("Done!", "Suppier deleted", "Ok");
+            url: api + "suppliers/delete",
+            type: "POST",
+            data: JSON.stringify(del),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+              notiflix.Notify.success("Supplier deleted successfully!");
+              // Additional logic to update the UI or state
+              $("#newSupplier").modal('hide');
+
+            },
+            error: function (error) {
+              notiflix.Notify.failure("Failed to delete supplier.");
+              console.error(error);
             },
           });
         },
@@ -2551,7 +2567,7 @@ $("#upSubmitSupplier").on("click", function (e) {
   }
 
   $.ajax({
-    url: api + "suppliers/suppliers",
+    url: api + "suppliers/update",
     type: "POST",
     data: JSON.stringify(upSupplierData),
     contentType: "application/json; charset=utf-8",
