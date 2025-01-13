@@ -392,6 +392,31 @@ if (auth == undefined) {
         });
       });
     }
+    // Filter products by supplier
+    function filterProductsBySupplier(supplier) {
+      let rows = $("#productList tbody tr");
+      rows.hide().filter(function () {
+        return $(this).find("td:eq(3)").text() === supplier;
+      }).show();
+
+      if (rows.filter(":visible").length === 0) {
+        $("#no-products-message").show();
+      } else {
+        $("#no-products-message").hide();
+      }
+    }
+
+    // Event listener for supplier dropdown change
+    $("#supplier-select").on("change", function () {
+      let selectedSupplier = $(this).val();
+      if (selectedSupplier === "0") {
+        $("#productList tbody tr").show();
+        $("#no-products-message").hide();
+      } else {
+        filterProductsBySupplier(selectedSupplier);
+      }
+    });
+    // if the selected supplier is found on the table rows sort them hrough and leave them
 
     function loadCustomers() {
       $.get(api + "customers/all", function (customers) {
@@ -2651,7 +2676,9 @@ function loadSupplierList() {
   }
 }
 
-
+$(document).ready(function () {
+  $("#productList").after('<div id="no-products-message" style="display:none;">No products found for the selected supplier.</div>');
+});
 
 
 
