@@ -236,6 +236,7 @@ if (auth == undefined) {
     loadProducts();
     loadCustomers();
     loadSupplierList();
+    loadSuppliers();
 
     if (settings && validator.unescape(settings.symbol)) {
       $("#price_curr, #payment_curr, #change_curr").text(validator.unescape(settings.symbol));
@@ -379,10 +380,15 @@ if (auth == undefined) {
 
 
     function loadSuppliers() {
-      $.get(api + "suppliers/all", function (data) {
+      $.get(api + "suppliers/suppliers", function (data) {
         allSuppliers= data;
         loadSupplierList();
-        //
+        $("#supplier-select").html(`<option value="0">Select</option>`);
+        allSuppliers.forEach((supplier) => {
+          $("#supplier-select").append(
+            `<option value="${supplier._id}">${supplier.name}</option>`,
+          );
+        });
       });
     }
 
@@ -1322,6 +1328,7 @@ if (auth == undefined) {
           $("#saveCategory").get(0).reset();
           loadCategories();
           loadProducts();
+          loadSuppliers();
           diagOptions = {
             title: "Category Saved",
             text: "Select an option below to continue.",
@@ -1704,6 +1711,7 @@ if (auth == undefined) {
             <td><img style="max-height: 50px; max-width: 50px; border: 1px solid #ddd;" src="${product_img}" id="product_img"></td>
             <td>${product.name}
             ${product.expiryAlert}</td>
+            <td>${product.supplier}</td>
             <td>${validator.unescape(settings.symbol)}${product.price}</td>
             <td>${product.stock == 1 ? product.quantity : "N/A"}
             ${product.stockAlert}

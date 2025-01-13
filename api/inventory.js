@@ -146,7 +146,7 @@ app.post("/product", function (req, res) {
                 fs.unlinkSync(imgPath);
                 image = "";
                 }
-                
+
             } catch (err) {
                 console.error(err);
                 res.status(500).json({
@@ -168,6 +168,7 @@ app.post("/product", function (req, res) {
                 ? 0
                 : validator.escape(req.body.quantity),
         name: validator.escape(req.body.name),
+        supplier: validator.escape(req.body.supplier),
         stock: req.body.stock === "on" ? 0 : 1,
         minStock: validator.escape(req.body.minStock),
         img: image,
