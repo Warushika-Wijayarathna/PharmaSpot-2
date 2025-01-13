@@ -386,7 +386,7 @@ if (auth == undefined) {
         $("#supplier-select").html(`<option value="0">Select</option>`);
         allSuppliers.forEach((supplier) => {
           $("#supplier-select").append(
-            `<option value="${supplier._id}">${supplier.name}</option>`,
+            `<option value="${supplier}">${supplier.name}</option>`,
           );
         });
       });
@@ -1360,6 +1360,12 @@ if (auth == undefined) {
         })
         .prop("selected", true);
 
+      $("#supplier-select option")
+        .filter(function () {
+            return $(this).val() == allProducts[index].supplier;
+        })
+        .prop("selected", true);
+
       $("#productName").val(allProducts[index].name);
       $("#product_price").val(allProducts[index].price);
       $("#quantity").val(allProducts[index].quantity);
@@ -1711,7 +1717,7 @@ if (auth == undefined) {
             <td><img style="max-height: 50px; max-width: 50px; border: 1px solid #ddd;" src="${product_img}" id="product_img"></td>
             <td>${product.name}
             ${product.expiryAlert}</td>
-            <td>${product.supplier}</td>
+            <td>${product.supplier.name}</td>
             <td>${validator.unescape(settings.symbol)}${product.price}</td>
             <td>${product.stock == 1 ? product.quantity : "N/A"}
             ${product.stockAlert}
