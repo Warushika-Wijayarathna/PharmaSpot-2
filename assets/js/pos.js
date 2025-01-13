@@ -385,8 +385,9 @@ if (auth == undefined) {
         loadSupplierList();
         $("#supplier-select").html(`<option value="0">Select</option>`);
         allSuppliers.forEach((supplier) => {
+          console.log("Supplier: ", supplier);
           $("#supplier-select").append(
-            `<option value="${supplier}">${supplier.name}</option>`,
+            `<option value="${supplier._id+"-"+supplier.name}">${supplier.name}</option>`,
           );
         });
       });
@@ -1708,6 +1709,9 @@ if (auth == undefined) {
           : default_item_img;
         }
 
+        // split the supplier by "-" into 2 parts and get the second part
+        const supplier_name = product.supplier.split("-")[1];
+
         //render product list
         product_list +=
           `<tr>
@@ -1717,7 +1721,7 @@ if (auth == undefined) {
             <td><img style="max-height: 50px; max-width: 50px; border: 1px solid #ddd;" src="${product_img}" id="product_img"></td>
             <td>${product.name}
             ${product.expiryAlert}</td>
-            <td>${product.supplier.name}</td>
+            <td>${supplier_name}</td>
             <td>${validator.unescape(settings.symbol)}${product.price}</td>
             <td>${product.stock == 1 ? product.quantity : "N/A"}
             ${product.stockAlert}

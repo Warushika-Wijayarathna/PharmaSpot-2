@@ -157,7 +157,10 @@ app.post("/product", function (req, res) {
 
         }
 
+    console.log("req.body.supplier >>", req.body.supplier);
+
     let Product = {
+
         _id: parseInt(validator.escape(req.body.id)),
         barcode: parseInt(validator.escape(req.body.barcode)),
         expirationDate: validator.escape(req.body.expirationDate),
