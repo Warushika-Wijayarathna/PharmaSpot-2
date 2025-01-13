@@ -35,7 +35,7 @@ suppliersDB.ensureIndex({ fieldName: "_id", unique: true });
  */
 app.get("/suppliers", (req, res) => {
     suppliersDB.find({}, (err, docs) => {
-        // show the databse file path
+        // show the database file path
         console.log("DBPath   :",dbPath);
         if (err) {
             res.status(500).json({
@@ -80,14 +80,22 @@ app.post("/suppliers", (req, res) => {
 app.post("/delete", (req, res) => {
     console.log(req.body);
     const supplier = req.body;
-    suppliersDB.insert(supplier, (err, newDoc) => {
+
+    suppliersDB.remove({ contact: supplier.contact }, {}, (err, numRemoved) => {
         if (err) {
             res.status(500).json({
                 error: "Internal Server Error",
-                message: "An unexpected error occurred while adding the supplier.",
+                message: "An unexpected error occurred while deleting the supplier.",
+            });
+        } else if (numRemoved === 0) {
+            res.status(404).json({
+                error: "Not Found",
+                message: `Supplier with contact ${contact} not found.`,
             });
         } else {
-            res.status(201).json(newDoc);
+            res.status(200).json({
+                message: `Supplier with contact ${contact} successfully deleted.`,
+            });
         }
     });
 });
@@ -103,7 +111,9 @@ app.post("/delete", (req, res) => {
 app.post("/update", (req, res) => {
     console.log(req.body);
     const supplier = req.body;
-    // compare the contact and if it is the same, update the supplier
+    const contact = supplier.contact;
+
+    // check for the ids and com pare if they are the same update the supplier
 
 });
 
