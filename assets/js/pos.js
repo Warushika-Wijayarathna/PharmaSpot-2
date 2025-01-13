@@ -378,6 +378,13 @@ if (auth == undefined) {
     }
 
 
+    function loadSuppliers() {
+      $.get(api + "suppliers/all", function (data) {
+        allSuppliers= data;
+        loadSupplierList();
+        //
+      });
+    }
 
     function loadCustomers() {
       $.get(api + "customers/all", function (customers) {
