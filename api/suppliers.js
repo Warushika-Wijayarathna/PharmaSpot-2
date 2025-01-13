@@ -80,6 +80,7 @@ app.post("/suppliers", (req, res) => {
 app.post("/delete", (req, res) => {
     console.log(req.body);
     const supplier = req.body;
+    const contact = supplier.contact;
 
     suppliersDB.remove({ contact: supplier.contact }, {}, (err, numRemoved) => {
         if (err) {
@@ -111,10 +112,43 @@ app.post("/delete", (req, res) => {
 app.post("/update", (req, res) => {
     console.log(req.body);
     const supplier = req.body;
-    const contact = supplier.contact;
+    const supplierId = supplier.id;
 
-    // check for the ids and com pare if they are the same update the supplier
+    // Check if supplier ID exists
+    if (!supplierId) {
+        res.status(400).json({
+            error: "Bad Request",
+            message: "Supplier ID is required.",
+        });
+        return;
+    }
 
+    suppliersDB.find({ id: supplierId}, (err, docs) => {
+        if (err) {
+            res.status(500).json({
+                error: "Internal Server Error",
+                message: "An unexpected error occurred while retrieving the supplier.",
+            });
+        } else if (docs.length === 0) {
+            res.status(404).json({
+                error: "Not Found",
+                message: `Supplier with ID ${supplierId} not found.`,
+            });
+        } else {
+            suppliersDB.update({ id: supplierId }, supplier, {}, (err, numReplaced) => {
+                if (err) {
+                    res.status(500).json({
+                        error: "Internal Server Error",
+                        message: "An unexpected error occurred while updating the supplier.",
+                    });
+                } else {
+                    res.status(200).json({
+                        message: `Supplier with ID ${supplierId} successfully updated.`,
+                    });
+                }
+            });
+        }
+    });
 });
 
 

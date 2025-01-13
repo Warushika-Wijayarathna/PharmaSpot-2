@@ -1534,6 +1534,7 @@ if (auth == undefined) {
               notiflix.Notify.success("Supplier deleted successfully!");
               // Additional logic to update the UI or state
               $("#newSupplier").modal('hide');
+                loadSupplierList();
 
             },
             error: function (error) {
@@ -1739,47 +1740,6 @@ if (auth == undefined) {
       });
     }
 
-    function loadSupplierList() {
-
-      $.get(api + "suppliers/suppliers", function (data) {
-        allSuppliers = data;
-
-      });
-
-      console.log("load Supplier table")
-
-      let supplier_list = "";
-      let counter = 0;
-      $("#supplier_list").empty();
-      $("#supplierList").DataTable().destroy();
-
-      allSuppliers.forEach((supplier, index) => {
-        counter++;
-
-        supplier_list += `
-                  <tr>
-                      <td>${supplier.name}</td>
-                      <td>${supplier.contact}</td>
-                      <td>
-                          <button class="btn btn-primary"  onClick="$(this).editSupplier(${index})">Edit</button>
-                          <button class="btn btn-danger" onClick="$(this).deleteSupplier(${index})">Delete</button>
-                          
-                      </td>
-                  </tr>
-              `;
-      });
-
-      if (counter == allSuppliers.length) {
-        $("#supplier_list").html(supplier_list);
-        $("#supplierList").DataTable({
-          autoWidth: false,
-          info: true,
-          JQueryUI: true,
-          ordering: true,
-          paging: false,
-        });
-      }
-    }
 
     function loadCategoryList() {
       let category_list = "";
@@ -2541,6 +2501,10 @@ function addSupplier(supplierData) {
       notiflix.Notify.success("Supplier added successfully!");
       // Additional logic to update the UI or state
       $("#newSupplier").modal('hide');
+      // clear the form
+        $("#supplierName").val("");
+        $("#supplierNumber").val("");
+
 
     },
     error: function (error) {
@@ -2575,6 +2539,12 @@ $("#upSubmitSupplier").on("click", function (e) {
       notiflix.Notify.success("Supplier updated successfully!");
       // Additional logic to update the UI or state
       $("#newSupplier").modal('hide');
+        // clear the form
+        $("#upSupplierName").val("");
+        $("#upSupplierNumber").val("");
+
+        // load the updated supplier list
+        loadSupplierList();
 
     },
     error: function (error) {
@@ -2614,7 +2584,47 @@ ipcRenderer.on("click-element", (event, elementId) => {
   document.getElementById(elementId).click();
 });
 
+function loadSupplierList() {
 
+  $.get(api + "suppliers/suppliers", function (data) {
+    allSuppliers = data;
+
+  });
+
+  console.log("load Supplier table")
+
+  let supplier_list = "";
+  let counter = 0;
+  $("#supplier_list").empty();
+  $("#supplierList").DataTable().destroy();
+
+  allSuppliers.forEach((supplier, index) => {
+    counter++;
+
+    supplier_list += `
+                  <tr>
+                      <td>${supplier.name}</td>
+                      <td>${supplier.contact}</td>
+                      <td>
+                          <button class="btn btn-primary"  onClick="$(this).editSupplier(${index})">Edit</button>
+                          <button class="btn btn-danger" onClick="$(this).deleteSupplier(${index})">Delete</button>
+                          
+                      </td>
+                  </tr>
+              `;
+  });
+
+  if (counter == allSuppliers.length) {
+    $("#supplier_list").html(supplier_list);
+    $("#supplierList").DataTable({
+      autoWidth: false,
+      info: true,
+      JQueryUI: true,
+      ordering: true,
+      paging: false,
+    });
+  }
+}
 
 
 
